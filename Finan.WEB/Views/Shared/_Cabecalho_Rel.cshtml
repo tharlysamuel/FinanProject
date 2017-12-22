@@ -1,0 +1,47 @@
+﻿
+<table style="position:fixed;top:0;left:2px" align="center">
+
+    <tbody>
+        <tr>
+            <td>  <button onclick="self.print();"> Imprimir </button> </td>
+            <td> <button onclick="window.history.back();"> Sair</button>  </td>
+        </tr>
+
+    </tbody>
+</table>
+
+
+
+
+
+
+<br>
+
+
+<table class="table-relatorios cabecalho">
+    <tbody>
+        <tr>
+            <td align=center width=50%>
+                <table>
+
+                    <tbody class="">
+
+                        <tr><td class="text-center">   <strong> @ViewBag.Title </strong></td></tr>
+
+
+                    </tbody>
+                </table>
+
+
+            </td>
+
+
+            <td width=5%>
+                <div class="text-right"> Emitido em  @DateTime.Now.ToShortDateString()</div>
+            </td>
+
+    </tbody>
+</table>
+
+<br>
+

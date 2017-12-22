@@ -1,0 +1,172 @@
+﻿@{
+    ViewBag.Title = "Tipos de Movimentação";
+    Layout = "~/Views/Shared/_Layout_2.cshtml";
+}
+
+<div class="wrapper wrapper-content  animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-9"> <h2 class="" style="color: #1ab394; font-weight:bolder">Tipos de Movimentação</h2></div>
+                        <div class="col-sm-3">
+                            <button type="button" onclick="actionEdit(0)" class="btn btn-primary pull-right" data-toggle="modal" data-target="#modal-edit">
+                                <i class="fa fa-plus-circle"></i> Novo Tipo
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="ibox-content m-b-sm border-bottom">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <div class="form-group">
+                                    <label class="control-label">Busca</label>
+                                    @Html.TextBox("pesquisa", "", new { @placeholder = "Digite Aqui", @class = "form-control", @autofocus = "true" })
+
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label class="control-label">Tipo Lançamento</label>
+                                    @Html.DropDownList("tipo_lancamento", new List<SelectListItem>{
+                                   new SelectListItem { Text = "Débito", Value = "D"  },
+                                   new SelectListItem { Text = "Crédito", Value = "C"  },
+                               },"-- Todos --", new { @class = "form-control", @onchange = "buscar()" })
+
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+
+                                <button class="btn btn-sm btn-default" style="margin-top: 25px; color: #213A53; " onclick="buscar()" type="button"><strong><i class="fa fa-search"></i> Buscar</strong></button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <br><br>
+
+                    <div id="partial">
+                        @Html.Action("PartialIndex")
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+<div id="edit">
+    <div class="modal inmodal" id="modal-edit" role="dialog" aria-hidden="true">
+    </div>
+</div>
+
+
+@section Styles {
+    @Styles.Render("~/plugins/sweetalert-css")
+    @Styles.Render("~/plugins/footableStyles")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/sweetalert")
+    @Scripts.Render("~/plugins/footable")
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#pesquisa').keypress(function (e) {
+
+                if (e.keyCode == 13) {
+                    buscar();
+                }
+
+            })
+
+            $('.footable').footable();
+        });
+
+        function buscar() {
+
+            var pesquisa = $('#pesquisa').val();
+            var tipo = $('#tipo_lancamento').val();
+
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("PartialIndex")',
+                dataType: 'html',
+                data: { pesquisa: pesquisa, tipo: tipo },
+                cache: false,
+                async: true,
+                success: function (data) {
+                    $('#partial').html(data);
+                    $('.footable').footable();
+                }
+
+            })
+        }
+
+        function actionEdit(id) {
+
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("Edit")',
+                dataType: 'html',
+                data: { id: id },
+                cache: false,
+                async: true,
+                success: function (data) {
+                    $('#modal-edit').html(data);
+                    $("#descricao").focus().select();
+                }
+
+            });
+        }
+
+        function Delete(id) {
+            swal({
+                title: "Você tem certeza?",
+                text: "Deseja excluir permanentemente este registro?",
+                type: "warning",
+                showCancelButton: true,
+                cancelButtonText: "Cancelar",
+                closeOnConfirm: false,
+                confirmButtonText: "Sim",
+
+            }, function () {
+                $.ajax({
+                    url: '@Url.Action("Delete")',
+                    type: "POST",
+                    data: { id: id },
+                    success: function (data) {
+                        if (data.Result == "OK") {
+                            swal({
+                                title: "Excluido!",
+                                confirmButtonText: "OK",
+                                type: "success",
+                            }, function () { buscar() });
+                        }
+                        else {
+                            swal({
+                                title: "Ops!",
+                                text: data.msg,
+                                confirmButtonText: "OK",
+                                type: "error",
+                            }, function () { buscar() });
+                        }
+                    }
+                })
+                .error(function (data) {
+                    swal("Ops!", "Não foi possível conectar ao servidor!", "error");
+                });
+            });
+        }
+
+
+    </script>
+}
+
+

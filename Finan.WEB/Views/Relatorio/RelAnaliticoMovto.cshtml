@@ -1,0 +1,43 @@
+﻿@model List<Finan.DAL.conta_movto>
+@{
+    ViewBag.Title = "RELATÓRIO DE MOVIMENTAÇÕES";
+    Layout = "~/Views/Shared/_Layout_Rel.cshtml";
+    ViewBag.qtde_registros = Model.Count.ToString();
+    int qtde_agrup = 0;
+}
+
+
+<table class="table-relatorios">
+    <thead>
+        <tr>
+            <th width="100px" class="titulo-coluna">VALOR (R$)</th>
+            <th width="25px" class="titulo-coluna">DATA</th>
+            <th width="150px" class="titulo-coluna">TIPO</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var obj in Model.GroupBy(a => new { id_conta = a.id_conta, nome = a.Conta.Cliente.nome + " - " + a.Conta.Banco.nome + " - " + a.Conta.descricao, saldo_inicial = a.Conta.saldo_inicial }))
+        {
+            qtde_agrup = 0;
+            <tr> <td class="info-registro"> CONTA: @obj.Key.nome</td></tr>
+            <tr> <td class="info-registro"> SALDO INICIAL: R$ @obj.Key.saldo_inicial.ToString("n2")</td></tr>
+            <tr> <td class="info-registro"> SALDO FINAL: R$ @((obj.Key.saldo_inicial + Model.Where(a=> a.id_conta == obj.Key.id_conta).Sum(a=> a.valor)).ToString("n2")) </td></tr>
+            foreach (var item in Model.Where(a => a.id_conta == obj.Key.id_conta))
+            {
+                <tr>
+                    <td class="atributo"> @item.valor.ToString("n2")</td>
+                    <td class="atributo"> @item.data.ToShortDateString()</td>
+                    <td class="atributo"> @item.Tipo.descricao</td>
+                </tr>
+                qtde_agrup++;
+            }
+            <tr>
+                <td colspan="6" class="text-right atributo"> @qtde_agrup Registros</td>
+            </tr>
+            <tr> <td colspan="6" style="border-top:1px solid">  </td> </tr>
+
+        }
+    </tbody>
+</table>
+
+

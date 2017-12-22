@@ -1,0 +1,96 @@
+﻿@model Finan.DAL.conta_movto
+
+@{
+    Layout = null;
+    string gravado = (string)ViewBag.gravado;
+    var contas = (SelectList)ViewBag.contas;
+    var tipos = (SelectList)ViewBag.tipos;
+
+    //string data = (string)ViewBag.data;
+
+}
+
+
+
+<div class="modal-dialog">
+    <div class="modal-content" id="modal1">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Movimentação</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+
+                @using (Ajax.BeginForm("Edit", "ContaMovto", new AjaxOptions
+                {
+                    UpdateTargetId = "modal-edit",
+                    InsertionMode = InsertionMode.Replace,
+                    HttpMethod = "Post",
+                    OnFailure = "alert('erro');",
+                    OnSuccess = "buscar();",
+                    OnComplete = "complete();"
+
+                }, new { id = "form" }))
+                {
+
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    @Html.HiddenFor(model => model.id_movto)
+
+                    <div class="row">
+                        <div class="col-lg-4 col-sm-6">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.valor)
+                                @Html.TextBoxFor(model => model.valor, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.valor)
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.data)
+                                @Html.TextBoxFor(model => model.data, new { @type = "date", @class = "form-control", @Value = DateTime.Today.ToString("yyyy-MM-dd") })
+                                @Html.ValidationMessageFor(model => model.data)
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-sm-4">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.id_tipo_movto)
+                                @Html.DropDownListFor(model => model.id_tipo_movto, tipos, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.id_tipo_movto)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.id_conta)
+                                @Html.DropDownListFor(model => model.id_conta, contas, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.id_conta)
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" onclick="$('#form').trigger('submit');" class="btn btn-primary"><i class="fa fa-save"></i> Salvar</button>
+            <button type="button" id="btnFechar" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i> Fechar</button>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+
+    $(function () {
+        $('#valor').maskMoney({ showSymbol: false, symbol: "R$", decimal: ",", thousands: "." });
+    })
+
+    function complete() {
+        if ('@(gravado)' == 'true') {
+            $('#btnFechar').trigger('click');
+        }
+    }
+
+</script>

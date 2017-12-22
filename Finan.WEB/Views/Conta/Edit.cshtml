@@ -1,0 +1,106 @@
+﻿@model Finan.DAL.conta
+
+@{
+    Layout = null;
+    string gravado = (string)ViewBag.gravado;
+    var bancos = (SelectList)ViewBag.bancos;
+    var clientes = (SelectList)ViewBag.clientes;
+}
+
+
+
+<div class="modal-dialog modal-lg">
+    <div class="modal-content" id="modal1">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Conta Bancária</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                @using (Ajax.BeginForm("Edit", "TipoMovto", new AjaxOptions
+                {
+                    UpdateTargetId = "modal-edit",
+                    InsertionMode = InsertionMode.Replace,
+                    HttpMethod = "Post",
+                    OnFailure = "alert('erro');",
+                    OnSuccess = "buscar();",
+                    OnComplete = "complete();"
+
+                }, new { id = "form1" }))
+                {
+
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    @Html.HiddenFor(model => model.id_conta)
+
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.descricao)
+                                @Html.TextBoxFor(model => model.descricao, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.descricao)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.id_banco)
+                                @Html.DropDownListFor(model => model.id_banco,bancos, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.id_banco)
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-sm-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.id_cliente)
+                                @Html.DropDownListFor(model => model.id_cliente, clientes, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.id_cliente)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2 col-sm-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.saldo_inicial)
+                                @Html.TextBoxFor(model => model.saldo_inicial, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.saldo_inicial)
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2 col-sm-12">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ativa)
+                                @Html.DropDownListFor(model => model.ativa, new List<SelectListItem>
+                           {
+                                   new SelectListItem { Text = "Ativa", Value = "true", Selected = true  },
+                                   new SelectListItem { Text = "Inativa", Value = "false"  },
+                           }, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.ativa)
+                            </div>
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" onclick="$('#form1').trigger('submit');" class="btn btn-primary"><i class="fa fa-save"></i> Salvar</button>
+            <button type="button" id="btnFechar" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times"></i> Fechar</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('#saldo_inicial').maskMoney({ showSymbol: false, symbol: "R$", decimal: ",", thousands: "." });
+    })
+
+    function complete() {
+        if ('@gravado' == 'true') {
+            $('#btnFechar').trigger('click');
+        }
+    }
+</script>
+

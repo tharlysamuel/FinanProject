@@ -1,0 +1,54 @@
+﻿body {
+    align-content: center;
+    padding-left: 200px;
+    padding-right: 200px;
+    color: black;
+}
+
+
+hr {
+    color: black;
+}
+
+
+.table-relatorios {
+    width: 100%;
+    border-bottom: 0px solid;
+    margin-bottom: 5px;
+}
+
+.titulo-coluna {
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+    font-size: 9px;
+}
+
+.cabecalho {
+    font-size: 9px;
+    border-bottom: 1px solid;
+    border-top: 1px solid;
+}
+
+.info-registro {
+    font-weight: bold;
+    font-size: 9px;
+    padding-top: 3px;
+}
+
+.atributo {
+    font-size: 8px;
+}
+
+
+@media print {
+    button {
+        display: none;
+    }
+
+    body {
+        align-content: center;
+        padding-left: 0px;
+        padding-right: 0px;
+        color: black;
+    }
+}

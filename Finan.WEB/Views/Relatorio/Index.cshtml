@@ -1,0 +1,101 @@
+﻿@{
+    ViewBag.Title = "Relatórios";
+    var contas = (SelectList)ViewBag.contas;
+    string erros = ViewBag.error;
+}
+
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>Relatórios</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="">
+                    @using (Html.BeginForm("Index", "Relatorio"))
+                    {
+                        <div class="row">
+                            <div class="validation-summary-errors" style="visibility: @(erros == null ? "hidden" : "visible")">
+                                <ul>
+                                    <li > @erros</li>
+                                </ul>
+                            </div>
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true)
+
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    @Html.Label("Tipo do Relatório")
+                                    @Html.DropDownList("tipo_rel", new List<SelectListItem> {
+                                   new SelectListItem{ Text = "Bancos/Resumo de contas", Value = "banco_contas" },
+                                   new SelectListItem{ Text = "Bancos/Resumo de clientes", Value = "banco_clientes" },
+                                   new SelectListItem{ Text = "Movimentações/Agrupado por contas", Value = "movto_contas" },
+                               }, new { @class = "form-control" })
+
+                                </div>
+                            </div>
+                            <div class="col-lg-12" id="divConta">
+                                <div class="form-group">
+                                    @Html.Label("Conta")
+                                    @Html.DropDownList("id_conta", contas, new { @class = "form-control" })
+                                    @Html.ValidationMessage("id_conta")
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4 col-md-4" id="divDataInicial">
+                                <label class="control-label">Data Inicial:</label>
+                                @Html.TextBox("data_inicial", null, new { @onblur = "buscar()", @class = "form-control", @type = "date", @Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString("yyyy-MM-dd") })
+                            </div>
+                            <div class="col-sm-4 col-md-4" id="divDataFinal">
+                                <label class="control-label">Data Final</label>
+                                @Html.TextBox("data_final", null, new { @onblur = "buscar()", @class = "form-control", @type = "date", @Value = DateTime.Today.ToString("yyyy-MM-dd") })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="pull-right">
+                                <button id="btnSalvar" class=" btn btn-primary" type="submit"><i class="fa fa-print"></i> Imprimir</button>
+                                <a class=" btn btn-white" id="btnFechar" href="@Url.Action("Index","Painel")"> <i class="fa fa-close"></i> Cancelar</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+
+    <script>
+
+        $(function () {
+
+            if ($('#tipo_rel').val() == "banco_contas" || $('#tipo_rel').val() == "banco_clientes") {
+                $('#divConta, #divDataInicial, #divDataFinal').hide();
+            }
+            else {
+                $('#divConta, #divDataInicial, #divDataFinal').show();
+
+            }
+
+            $('#tipo_rel').change(function () {
+                if ($(this).val() == "banco_contas" || $(this).val() == "banco_clientes") {
+                    $('#divConta, #divDataInicial, #divDataFinal').hide();
+                }
+                else {
+                    $('#divConta, #divDataInicial, #divDataFinal').show();
+
+                }
+            })
+        })
+
+
+    </script>
+}
+
+

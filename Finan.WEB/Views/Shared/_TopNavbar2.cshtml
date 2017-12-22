@@ -1,0 +1,37 @@
+﻿<div class="row border-bottom white-bg">
+    <nav class="navbar navbar-static-top" role="navigation">
+        <div class="navbar-header">
+            <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+                <i class="fa fa-reorder"></i>
+            </button>
+            <a href="@Url.Action("Index", "Painel")" class="navbar-brand">Financeiro+</a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar">
+            <ul class="nav navbar-nav">
+                <li class="@Html.IsSelected(controller:"ContaMovto",action: "Index")">
+                    <a aria-expanded="false" role="button" href="@Url.Action("Index", "ContaMovto")">Movimentações</a>
+                </li>
+
+                <li class="@Html.IsSelected(controller:"Conta",action: "Index")">
+                    <a aria-expanded="false" role="button" href="@Url.Action("Index", "Conta")">  Contas </a>
+                </li>
+
+                <li class="@Html.IsSelected(controller:"Banco",action: "Index")">
+                    <a aria-expanded="false" role="button" href="@Url.Action("Index", "Banco")">  Bancos </a>
+                </li>
+
+                <li class="@Html.IsSelected(controller:"Cliente",action: "Index")">
+                    <a aria-expanded="false" role="button" href="@Url.Action("Index", "Cliente")">  Clientes </a>
+                </li>
+
+                <li class="@Html.IsSelected(controller:"TipoMovto",action: "Index")">
+                    <a aria-expanded="false" role="button" href="@Url.Action("Index", "TipoMovto")"> Tipos Movimentação </a>
+                </li>
+                <li class="@Html.IsSelected(controller:"Relatorio",action: "Index")">
+                    <a aria-expanded="false" role="button" href="@Url.Action("Index", "Relatorio")"> Relatórios </a>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+</div>

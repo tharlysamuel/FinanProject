@@ -1,0 +1,153 @@
+﻿@{
+    ViewBag.Title = "Movimentações";
+    Layout = "~/Views/Shared/_Layout_2.cshtml";
+
+    var contas = (SelectList)ViewBag.contas;
+    var tipos = (SelectList)ViewBag.tipos;
+    var bancos = (SelectList)ViewBag.bancos;
+    var clientes = (SelectList)ViewBag.clientes;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading" style="height: auto;">
+    <div class="row">
+        <div class="col-sm-2 col-md-11">
+            <h2>Movimentações</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-2 col-md-2">
+            <label class="control-label">Conta:</label>
+            @Html.DropDownList("id_conta", contas, "Todos", new { @onchange = "buscar()", @class = "form-control" })
+        </div>
+        <div class="col-sm-2 col-md-2">
+            <label class="control-label">Tipo:</label>
+            @Html.DropDownList("id_tipo", tipos, "Todos", new { @onchange = "buscar()", @class = "form-control" })
+        </div>
+        <div class="col-sm-2 col-md-2">
+            <label class="control-label">Banco:</label>
+            @Html.DropDownList("id_banco", bancos, "Todos", new { @onchange = "buscar()", @class = "form-control" })
+        </div>
+        <div class="col-sm-2 col-md-2">
+            <label class="control-label">Cliente:</label>
+            @Html.DropDownList("id_cliente", clientes, "Todos", new { @onchange = "buscar()", @class = "form-control" })
+        </div>
+        <div class="col-sm-2 col-md-2">
+            <label class="control-label">Data Inicial:</label>
+            @Html.TextBox("data_inicial",null, new { @onblur = "buscar()", @class = "form-control", @type = "date", @Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).ToString("yyyy-MM-dd") })
+        </div>
+        <div class="col-sm-2 col-md-2">
+            <label class="control-label">Data Final</label>
+            @Html.TextBox("data_final", null,  new { @onblur = "buscar()", @class = "form-control", @type = "date", @Value = DateTime.Today.ToString("yyyy-MM-dd") })
+        </div>
+
+    </div>
+</div>
+
+
+
+<div class="wrapper wrapper-content  animated fadeInRight" id="ibox-content">
+
+    <div id="partial">
+        @Html.Action("PartialIndex", "ContaMovto")
+    </div>
+
+</div>
+
+<div id="edit">
+    <div class="modal inmodal" id="modal-edit" role="dialog" aria-hidden="true">
+    </div>
+</div>
+
+
+@section Styles {
+    @Styles.Render("~/plugins/sweetalert-css")
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/sweetalert")
+    <script src="~/Scripts/plugins/mask/jquery.mask.min.js"></script>
+    <script src="~/Scripts/plugins/maskMoney/jquery.maskMoney.js"></script>
+
+    <script type="text/javascript">
+
+        function buscar() {
+
+            var id_conta = $('#id_conta').val();
+            var id_tipo = $('#id_tipo').val();
+            var id_banco = $('#id_banco').val();
+            var id_cliente = $('#id_cliente').val();
+            var data_inicial = $('#data_inicial').val();
+            var data_final = $('#data_final').val();
+
+
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("PartialIndex")',
+                dataType: 'html',
+                data: { id_conta: id_conta, id_tipo: id_tipo, id_banco: id_banco, id_cliente: id_cliente, data_inicial: data_inicial, data_final: data_final },
+                cache: false,
+                async: true,
+                success: function (data) {
+                    $('#partial').html(data);
+                }
+
+            })
+        }
+
+        function edit(id) {
+
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("Edit")',
+                dataType: 'html',
+                data: { id: id },
+                cache: false,
+                async: true,
+                success: function (data) {
+                    $('#modal-edit').html(data);
+                    $("#valor").focus().select();
+                }
+
+            });
+        }
+
+        function excluir(id) {
+
+
+
+            swal({
+                title: "Você tem certeza?",
+                text: "Deseja excluir permanentemente este registro?",
+                type: "warning",
+                showCancelButton: true,
+                cancelButtonText: "Cancelar",
+                closeOnConfirm: false,
+                confirmButtonText: "Sim",
+
+            }, function () {
+                $.ajax({
+                    url: '@Url.Action("Delete")',
+                    type: "POST",
+                    data: { id: id },
+                })
+                .done(function (data) {
+                    if (data.Result == "Error") {
+                        swal("Atenção!", data.msg, "warning");
+                    }
+                    else {
+                        swal({
+                            title: "Excluido!",
+                            confirmButtonText: "OK",
+                            type: "success",
+                        }, function () { buscar() });
+                    }
+                })
+                .error(function (data) {
+                    swal("Ops!", "Não foi possível conectar ao servidor!", "error");
+                });
+            });
+        }
+
+    </script>
+
+}

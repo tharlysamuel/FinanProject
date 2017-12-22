@@ -1,0 +1,65 @@
+﻿@model List<Finan.DAL.conta_movto>
+@{
+    Layout = null;
+}
+
+
+
+<div id="vertical-timeline" class="vertical-container light-timeline">
+
+    <div class="vertical-timeline-block">
+        <div class="vertical-timeline-icon navy-bg">
+            <i class="fa fa-plus"></i>
+        </div>
+
+        <div class="vertical-timeline-content">
+            @if (Model.Count == 0)
+            {
+                <h3>
+                    Nenhuma Movimentação Registrada
+                </h3>
+            }
+            else
+            {
+                <div class="col-lg-6">
+                    <h4>
+                        Saldo :  @((Model.Sum(a => a.valor) + Model.Select(a=> a.Conta).Sum(a=> a.saldo_inicial)).ToString("n2"))
+                        
+                      
+                    </h4>
+                    <span>@Model.Count Movimentações Encontradas </span>
+                </div>
+            }
+
+            <button type="button" onclick="edit(0)" style="margin-top: 12px;" class="btn btn-primary " data-toggle="modal" data-target="#modal-edit">
+                <i class=" fa fa-plus-circle">
+                </i> Nova
+            </button>
+        </div>
+    </div>
+
+
+    @foreach (var item in Model)
+    {
+
+
+        <div class="vertical-timeline-block">
+            <div style="background-color:@(item.Tipo.tipo_lancamento == "D" ? "red" : "#1ab394")" class="vertical-timeline-icon navy-bg">
+                <i class="fa @(item.Tipo.tipo_lancamento == "D" ? "fa-arrow-down" : "fa-arrow-up" )"></i>
+            </div>
+
+            <div class="vertical-timeline-content">
+                <h3>
+                    R$ @item.valor.ToString("n2") <small>(@item.Tipo.descricao)</small>
+                    <button class="btn btn-xs btn-danger" type="button" onclick="excluir(@item.id_movto)" title="Excluir"><i class=" fa fa-trash"></i></button>
+                    <button class="btn btn-xs btn-primary" type="button" onclick="edit(@item.id_movto)" title="Editar" data-toggle="modal" data-target="#modal-edit"><i class=" fa fa-edit"></i></button>
+                </h3>
+                <span style="background-color: #c2eae2;">@item.data.ToLongDateString()</span>
+                <div style="font-size:13px;" class=""> @item.Conta.Cliente.nome <br /> @item.Conta.Banco.nome / @item.Conta.descricao</div>
+
+
+            </div>
+        </div>
+    }
+</div>
+

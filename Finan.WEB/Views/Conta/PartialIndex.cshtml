@@ -1,0 +1,57 @@
+﻿@model List<Finan.DAL.conta>
+
+@{
+    Layout = null;
+}
+
+<div class="table-responsive">
+    <table class="footable table table-striped table-hover toggle-arrow-tiny" data-page-size="10" data-filter=#filter>
+        <thead>
+            <tr>
+                <th data-toggle="true" style="color: #1ab394"> Descrição </th>
+                <th data-toggle="true" style="color: #1ab394"> Saldo Inicial </th>
+                <th data-toggle="true" style="color: #1ab394"> Saldo Atual </th>
+                <th data-toggle="true" style="color: #1ab394"> Status </th>
+                <th data-toggle="true" style="color: #1ab394"> Banco </th>
+                <th data-toggle="true" style="color: #1ab394"> Cliente </th>
+                <th data-hide="phone" data-sort-ignore="true" style="color: #1ab394">Ação</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td> @item.descricao</td>
+                    <td> @item.saldo_inicial.ToString("n2")</td>
+                    <td> @((item.Movimentacao.Sum(a=> a.valor) + item.saldo_inicial).ToString("n2"))</td>
+                    <td> @(item.ativa ? "Ativa" : "Inativa") </td>
+                    <td> @item.Banco.nome</td>
+                    <td> @item.Cliente.nome</td>
+
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-xs btn-default" type="button" onclick="actionEdit(@item.id_conta)" title="Editar" data-toggle="modal" data-target="#modal-edit"><i class=" fa fa-edit"></i> </button>
+                            <button class="btn btn-xs btn-default" type="button" title="Excluir" onclick="Delete(@item.id_conta)"> <i class=" fa fa-trash"></i> </button>
+                        </div>
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="7">
+                    <ul class="pagination pull-right"></ul>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+
+
+
+

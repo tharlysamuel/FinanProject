@@ -1,0 +1,47 @@
+﻿@model List<Finan.DAL.conta>
+@{
+    ViewBag.Title = "RELATÓRIO DE CONTAS POR BANCOS";
+    Layout = "~/Views/Shared/_Layout_Rel.cshtml";
+    ViewBag.qtde_registros = Model.Count.ToString();
+    int qtde_agrup = 0;
+}
+
+
+<table class="table-relatorios">
+    <thead>
+        <tr>
+            <th width="100px" class="titulo-coluna">CLIENTE</th>
+            <th width="150px" class="titulo-coluna">DESCRIÇÃO</th>
+            <th width="25" class="titulo-coluna">SALDO INICIAL</th>
+            <th width="25" class="titulo-coluna">SALDO</th>
+            <th width="25px" class="titulo-coluna">MOVIMENTAÇÕES</th>
+            <th width="25px" class="titulo-coluna">STATUS</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var obj in Model.GroupBy(a => new { id_banco = a.id_banco , nome = a.Banco.nome }))
+        {
+            qtde_agrup = 0;
+            <tr> <td class="info-registro"> BANCO: @obj.Key.nome</td></tr>
+            foreach (var item in Model.Where(a => a.id_banco == obj.Key.id_banco))
+            {
+                <tr>
+                    <td class="atributo"> @item.Cliente.nome</td>
+                    <td class="atributo"> @item.descricao</td>
+                    <td class="atributo"> @item.saldo_inicial.ToString("n2")</td>
+                    <td class="atributo"> @((item.Movimentacao.Sum(a => a.valor) + item.saldo_inicial).ToString("n2")) </td>
+                    <td class="atributo"> @item.Movimentacao.Count</td>
+                    <td class="atributo"> @(item.ativa ? "ATIVA" : "INATIVA")  </td>
+                </tr>
+                qtde_agrup++;
+            }
+            <tr>
+                <td colspan="6" class="text-right atributo"> @qtde_agrup Registros</td>
+            </tr>
+            <tr> <td colspan="6" style="border-top:1px solid">  </td> </tr>
+
+        }
+    </tbody>
+</table>
+
+
